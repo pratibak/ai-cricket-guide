@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 import pandas as pd
 
 # Configure OpenAI API Key using Streamlit secrets
@@ -15,7 +15,7 @@ st.set_page_config(
     page_icon="🏏",
     layout="wide"
 )
-client = openai(st.secrets["OPENAI_API_KEY"])
+client = OpenAI(st.secrets["OPENAI_API_KEY"])
 
 
 
