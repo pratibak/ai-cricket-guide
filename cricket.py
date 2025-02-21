@@ -3,14 +3,15 @@ from openai import OpenAI
 import os
 
 # Set up environment variable for OpenAI
-os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+from openai import OpenAI
+
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
 
 # Page config
 st.title("AI Cricket Coach")
 
 
-# Initialize client with no arguments
-client = OpenAI()
 
 # Initialize chat history
 if "messages" not in st.session_state:
