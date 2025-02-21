@@ -1,20 +1,21 @@
 import streamlit as st
 from openai import OpenAI
-import os
 
-# Set up the page
+# Page config
+st.set_page_config(
+    page_title="AI Cricket Coach",
+    page_icon="🏏",
+    layout="wide"
+)
+
 st.title("🏏 AI Cricket Coach")
-st.markdown("Your personalized path to cricket excellence")
 
-# Set up environment variable for OpenAI
-os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-
-# Initialize client
-client = OpenAI()
+# Initialize the OpenAI client
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Set default model
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-4o"  # Updated to new model
+    st.session_state["openai_model"] = "gpt-4o"
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -29,24 +30,17 @@ for message in st.session_state.messages:
 if prompt := st.chat_input("Ask your cricket coach anything..."):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
+    
     # Display user message in chat message container
     with st.chat_message("user"):
         st.markdown(prompt)
-
+        
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
         stream = client.chat.completions.create(
-            model="gpt-4o",  # Updated to new model
+            model=st.session_state["openai_model"],
             messages=[
-                {"role": "system", "content": """You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life—so that his entire performance, career, and mindset are transformed into world-class standards.
-
-Responsibilities:
-🔹 Track his training schedule, fitness, match performances, and mental state.
-🔹 Provide customized drills, workouts, nutrition plans, and mindset strategies.
-🔹 Give detailed analysis of his recent matches and identify key areas for growth.
-🔹 Plan weekly routines for batting, strength, power-hitting, recovery, and discipline.
-🔹 Help him prepare for IPL, India A, and high-performance tournaments.
-🔹 Ensure peak confidence, resilience, and focus in high-pressure situations."""},
+                {"role": "system", "content": """You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life."""},
                 *[
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
@@ -56,7 +50,3 @@ Responsibilities:
         )
         response = st.write_stream(stream)
     st.session_state.messages.append({"role": "assistant", "content": response})
-
-# Footer
-st.markdown("---")
-st.markdown("💡 Keep training, keep improving!")
