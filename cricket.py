@@ -1,14 +1,26 @@
 import streamlit as st
 from openai import OpenAI
 import pandas as pd
+import os
 
-# Initialize OpenAI client
-if "OPENAI_API_KEY" not in st.secrets:
-    st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
+# Set up OpenAI API key
+try:
+    # First check if it's in Streamlit secrets
+    if "OPENAI_API_KEY" in st.secrets:
+        os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+    
+    # Verify we have an API key
+    if "OPENAI_API_KEY" not in os.environ:
+        st.error("OpenAI API key not found. Please set it in Streamlit secrets.")
+        st.stop()
+        
+    # Initialize client with minimal configuration
+    client = OpenAI(
+        base_url="https://api.openai.com/v1"
+    )
+except Exception as e:
+    st.error(f"Error initializing OpenAI client: {str(e)}")
     st.stop()
-
-# Create client without any additional configuration
-client = OpenAI()
 
 # Page configuration
 st.set_page_config(
