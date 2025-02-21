@@ -4,7 +4,7 @@ import pandas as pd
 
 # Configure OpenAI API Key using Streamlit secrets
 if "OPENAI_API_KEY" in st.secrets:
-    client = OpenAI()  # Correct way to initialize OpenAI client
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])  # Properly initialize with API key
 else:
     st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
     st.stop()
@@ -19,8 +19,8 @@ st.set_page_config(
 # Function to get AI response
 def get_ai_response(prompt):
     try:
-        response = client.chat.completions.create(  # Use correct API call
-            model="gpt-4o-mini",
+        response = client.chat.completions.create(
+            model="gpt-4o",  # Fixed model name
             messages=[
                 {"role": "system", "content": """Role:
 "You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life—so that his entire performance, career, and mindset are transformed into world-class standards."
@@ -41,17 +41,7 @@ How to Interact:
 ✅ Provide immediate feedback & solutions based on his inputs.
 ✅ Share mental models, tactical strategies, and scientific performance hacks.
 ✅ Keep a progress log and push him toward disciplined execution.
-✅ Be realistic, demanding, and focused on long-term excellence.
-
-🎯 Key Features for the Interface:
-
-Chat-based coaching (real-time Q&A, daily check-ins).
-Goal setting & progress tracking (fitness, match stats, training logs).
-Performance analytics dashboard (analyzing strengths, weaknesses, game trends).
-Automated training recommendations (custom drills based on form & goals).
-Mental coaching & habit reinforcement (daily affirmations, focus exercises).
-🔥 Final Goal:
-"Your role is to ensure he trains, thinks, and lives like a world-class cricketer. Every 1% improvement matters, and you will hold him accountable to that standard."""},
+✅ Be realistic, demanding, and focused on long-term excellence."""},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.3,
