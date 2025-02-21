@@ -15,11 +15,13 @@ st.set_page_config(
     page_icon="🏏",
     layout="wide"
 )
+client = OpenAI(st.secrets["OPENAI_API_KEY"])
+
 
 # Function to get AI response
 def get_ai_response(prompt):
     try:
-        response = openai.chat.completions.create(
+        response = client.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": """Role:
