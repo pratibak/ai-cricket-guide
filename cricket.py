@@ -1,16 +1,12 @@
 import streamlit as st
 import openai
 import pandas as pd
-import os
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
-# Configure OpenAI API
-openai.api_key = os.getenv("OPENAI_API_KEY")
-if not openai.api_key:
-    st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
+# Configure OpenAI API Key using Streamlit secrets
+if "OPENAI_API_KEY" in st.secrets:
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+else:
+    st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
     st.stop()
 
 # Page configuration
@@ -24,13 +20,13 @@ st.set_page_config(
 def get_ai_response(prompt):
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are an expert cricket coach with deep knowledge of technique, strategy, and training."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.7,
-            max_tokens=1000
+            temperature=0.3,
+            max_tokens=4000
         )
         return response.choices[0].message.content
     except Exception as e:
