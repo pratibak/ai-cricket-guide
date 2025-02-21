@@ -12,7 +12,7 @@ else:
 # Page configuration
 st.set_page_config(
     page_title="AI Cricket Coach",
-    page_icon="\ud83c\udfcf",
+    page_icon="🏏",
     layout="wide"
 )
 
@@ -63,7 +63,7 @@ Mental coaching & habit reinforcement (daily affirmations, focus exercises).
         return None
 
 # Title and introduction
-st.title("\ud83c\udfcf AI Cricket Coach")
+st.title("🏏 AI Cricket Coach")
 st.markdown("Your personalized path to cricket excellence")
 
 # Initialize session state for user data
@@ -100,4 +100,4 @@ if st.button("Get Advice"):
 
 # Footer
 st.markdown("---")
-st.markdown("\ud83d\udca1 Keep training, keep improving!")
+st.markdown("💡 Keep training, keep improving!")
