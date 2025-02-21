@@ -27,7 +27,7 @@ st.set_page_config(
 def get_ai_response(prompt):
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": """Role:
 "You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life—so that his entire performance, career, and mindset are transformed into world-class standards."
