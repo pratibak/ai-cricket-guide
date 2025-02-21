@@ -6,12 +6,6 @@ import os
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 # Page config
-st.set_page_config(
-    page_title="AI Cricket Coach",
-    page_icon="🏏",
-    layout="wide"
-)
-
 st.title("🏏 AI Cricket Coach")
 
 # Initialize client with no arguments
@@ -40,7 +34,7 @@ if prompt := st.chat_input("Ask your cricket coach anything..."):
         stream = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": """You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life."""},
+                {"role": "system", "content": """You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket."""},
                 *[
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
