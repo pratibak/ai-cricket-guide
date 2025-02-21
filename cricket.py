@@ -1,20 +1,20 @@
 import streamlit as st
-import os
 from openai import OpenAI
 import pandas as pd
 
-# Configure OpenAI API Key using Streamlit secrets
-def initialize_openai_client():
-    try:
-        if "OPENAI_API_KEY" in st.secrets:
-            os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-        return OpenAI()
-    except Exception as e:
-        st.error(f"Failed to initialize OpenAI client: {str(e)}")
+# Configure OpenAI API Key using environment variable
+try:
+    if "OPENAI_API_KEY" not in st.secrets:
+        st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
         st.stop()
-
-# Initialize the OpenAI client
-client = initialize_openai_client()
+    
+    # Initialize OpenAI client with just the API key
+    client = OpenAI(
+        api_key=st.secrets["OPENAI_API_KEY"]
+    )
+except Exception as e:
+    st.error(f"Error initializing OpenAI client: {str(e)}")
+    st.stop()
 
 # Page configuration
 st.set_page_config(
@@ -27,7 +27,7 @@ st.set_page_config(
 def get_ai_response(prompt):
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": """Role:
 "You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life—so that his entire performance, career, and mindset are transformed into world-class standards."
