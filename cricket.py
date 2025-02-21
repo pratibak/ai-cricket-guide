@@ -6,6 +6,7 @@ import pandas as pd
 
 # Configure OpenAI API Key using Streamlit secrets
 if "OPENAI_API_KEY" in st.secrets:
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 else:
     st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
     st.stop()
