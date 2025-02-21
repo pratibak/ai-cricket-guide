@@ -1,9 +1,9 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 
-# Configure OpenAI API Key using Streamlit secrets
+# Configure OpenAI client using Streamlit secrets
 if "OPENAI_API_KEY" in st.secrets:
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 else:
     st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
     st.stop()
@@ -17,8 +17,8 @@ st.set_page_config(
 
 def get_ai_response(prompt):
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
+        response = client.chat.completions.create(
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": """Role:
 "You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life—so that his entire performance, career, and mindset are transformed into world-class standards."
