@@ -15,7 +15,7 @@ st.set_page_config(
     page_icon="🏏",
     layout="wide"
 )
-client = OpenAI(st.secrets["OPENAI_API_KEY"])
+client = OpenAI(openai.api_key)
 
 
 # Function to get AI response
