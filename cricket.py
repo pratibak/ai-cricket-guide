@@ -1,10 +1,10 @@
 import streamlit as st
-from openai import OpenAI
+import openai
 import pandas as pd
 
 # Configure OpenAI API Key using Streamlit secrets
 if "OPENAI_API_KEY" in st.secrets:
-     api_key = st.secrets["OPENAI_API_KEY"]
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 else:
     st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
     st.stop()
@@ -12,14 +12,14 @@ else:
 # Page configuration
 st.set_page_config(
     page_title="AI Cricket Coach",
-    page_icon="🏏",
+    page_icon="\ud83c\udfcf",
     layout="wide"
 )
 
 # Function to get AI response
 def get_ai_response(prompt):
     try:
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": """Role:
@@ -57,13 +57,13 @@ Mental coaching & habit reinforcement (daily affirmations, focus exercises).
             temperature=0.3,
             max_tokens=4000
         )
-        return response.choices[0].message.content
+        return response["choices"][0]["message"]["content"]
     except Exception as e:
         st.error(f"Error getting AI response: {str(e)}")
         return None
 
 # Title and introduction
-st.title("🏏 AI Cricket Coach")
+st.title("\ud83c\udfcf AI Cricket Coach")
 st.markdown("Your personalized path to cricket excellence")
 
 # Initialize session state for user data
@@ -100,4 +100,4 @@ if st.button("Get Advice"):
 
 # Footer
 st.markdown("---")
-st.markdown("💡 Keep training, keep improving!")
+st.markdown("\ud83d\udca1 Keep training, keep improving!")
