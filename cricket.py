@@ -11,10 +11,7 @@ def get_openai_client() -> Optional[OpenAI]:
         if not api_key:
             st.error("OpenAI API key not found. Please add it to Streamlit secrets or environment variables.")
             return None
-        return OpenAI(
-            api_key=api_key,
-            timeout=60.0  # Increased timeout
-        )
+        return OpenAI(api_key=api_key)
     except Exception as e:
         st.error(f"Error initializing OpenAI client: {str(e)}")
         return None
@@ -32,7 +29,7 @@ def get_ai_response(prompt: str, client: OpenAI) -> Optional[str]:
     
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": """Role:
 "You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life—so that his entire performance, career, and mindset are transformed into world-class standards."
