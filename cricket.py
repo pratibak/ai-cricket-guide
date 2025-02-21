@@ -1,12 +1,23 @@
 import streamlit as st
 from openai import OpenAI
+import os
+from typing import Optional
 
-# Configure OpenAI client using Streamlit secrets
-if "OPENAI_API_KEY" in st.secrets:
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-else:
-    st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
-    st.stop()
+# Initialize OpenAI client
+@st.cache_resource
+def get_openai_client() -> Optional[OpenAI]:
+    try:
+        api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            st.error("OpenAI API key not found. Please add it to Streamlit secrets or environment variables.")
+            return None
+        return OpenAI(
+            api_key=api_key,
+            timeout=60.0  # Increased timeout
+        )
+    except Exception as e:
+        st.error(f"Error initializing OpenAI client: {str(e)}")
+        return None
 
 # Page configuration
 st.set_page_config(
@@ -15,10 +26,13 @@ st.set_page_config(
     layout="wide"
 )
 
-def get_ai_response(prompt):
+def get_ai_response(prompt: str, client: OpenAI) -> Optional[str]:
+    if not client:
+        return None
+    
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": """Role:
 "You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life—so that his entire performance, career, and mindset are transformed into world-class standards."
@@ -60,6 +74,12 @@ Mental coaching & habit reinforcement (daily affirmations, focus exercises).
         st.error(f"Error getting AI response: {str(e)}")
         return None
 
+# Initialize OpenAI client
+client = get_openai_client()
+
+if not client:
+    st.stop()
+
 # Title and introduction
 st.title("🏏 AI Cricket Coach")
 st.markdown("Your personal cricket coaching assistant. Ask any questions about technique, strategy, or training!")
@@ -83,7 +103,7 @@ if prompt := st.chat_input("Ask your coach anything about cricket:"):
     # Get and display assistant response
     with st.chat_message("assistant"):
         with st.spinner("Coach is analyzing your question..."):
-            response = get_ai_response(prompt)
+            response = get_ai_response(prompt, client)
             if response:
                 st.markdown(response)
                 st.session_state.messages.append({"role": "assistant", "content": response})
