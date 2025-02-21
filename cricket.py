@@ -4,7 +4,7 @@ import pandas as pd
 
 # Configure OpenAI API Key using Streamlit secrets
 if "OPENAI_API_KEY" in st.secrets:
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 else:
     st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
     st.stop()
@@ -15,14 +15,11 @@ st.set_page_config(
     page_icon="🏏",
     layout="wide"
 )
-client = OpenAI(st.secrets["OPENAI_API_KEY"])
-
-
 
 # Function to get AI response
 def get_ai_response(prompt):
     try:
-        response = client.completions.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": """Role:
@@ -60,7 +57,7 @@ Mental coaching & habit reinforcement (daily affirmations, focus exercises).
             temperature=0.3,
             max_tokens=4000
         )
-        return response["choices"][0]["message"]["content"]
+        return response.choices[0].message.content  # Corrected dot notation
     except Exception as e:
         st.error(f"Error getting AI response: {str(e)}")
         return None
