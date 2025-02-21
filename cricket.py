@@ -1,20 +1,13 @@
 import streamlit as st
-from openai import OpenAI
-import os
-from typing import Optional
+import openai
+import pandas as pd
 
-# Initialize OpenAI client
-@st.cache_resource
-def get_openai_client() -> Optional[OpenAI]:
-    try:
-        api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            st.error("OpenAI API key not found. Please add it to Streamlit secrets or environment variables.")
-            return None
-        return OpenAI(api_key=api_key)
-    except Exception as e:
-        st.error(f"Error initializing OpenAI client: {str(e)}")
-        return None
+# Configure OpenAI API Key using Streamlit secrets
+if "OPENAI_API_KEY" in st.secrets:
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+else:
+    st.error("OpenAI API key not found. Please add it to Streamlit secrets.")
+    st.stop()
 
 # Page configuration
 st.set_page_config(
@@ -23,13 +16,11 @@ st.set_page_config(
     layout="wide"
 )
 
-def get_ai_response(prompt: str, client: OpenAI) -> Optional[str]:
-    if not client:
-        return None
-    
+# Function to get AI response
+def get_ai_response(prompt):
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": """Role:
 "You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life—so that his entire performance, career, and mindset are transformed into world-class standards."
@@ -71,39 +62,41 @@ Mental coaching & habit reinforcement (daily affirmations, focus exercises).
         st.error(f"Error getting AI response: {str(e)}")
         return None
 
-# Initialize OpenAI client
-client = get_openai_client()
-
-if not client:
-    st.stop()
-
 # Title and introduction
 st.title("🏏 AI Cricket Coach")
-st.markdown("Your personal cricket coaching assistant. Ask any questions about technique, strategy, or training!")
+st.markdown("Your personalized path to cricket excellence")
 
-# Initialize chat history if it doesn't exist
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# Initialize session state for user data
+if 'user_profile' not in st.session_state:
+    st.session_state.user_profile = {}
 
-# Display chat history
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# Chat Section
+st.header("Chat with Your AI Coach")
 
-# Chat input
-if prompt := st.chat_input("Ask your coach anything about cricket:"):
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
-    
-    # Get and display assistant response
-    with st.chat_message("assistant"):
+user_query = st.text_area("Ask your coach anything about cricket:")
+
+if st.button("Get Advice"):
+    if user_query:
         with st.spinner("Coach is analyzing your question..."):
-            response = get_ai_response(prompt, client)
+            # Include profile context if available
+            context = ""
+            if st.session_state.user_profile:
+                context = f"""
+                Player Context:
+                - Role: {st.session_state.user_profile.get('role', 'Not specified')}
+                - Experience: {st.session_state.user_profile.get('experience', 'Not specified')} years
+                - Level: {st.session_state.user_profile.get('current_level', 'Not specified')}
+                
+                Question: {user_query}
+                """
+            else:
+                context = user_query
+            
+            response = get_ai_response(context)
             if response:
                 st.markdown(response)
-                st.session_state.messages.append({"role": "assistant", "content": response})
+    else:
+        st.warning("Please enter your question!")
 
 # Footer
 st.markdown("---")
