@@ -6,7 +6,8 @@ import os
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 # Page config
-st.title("\ud83c\udfcf AI Cricket Coach")
+st.title("AI Cricket Coach")
+
 
 # Initialize client with no arguments
 client = OpenAI()
