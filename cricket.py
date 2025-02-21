@@ -1,5 +1,9 @@
 import streamlit as st
 from openai import OpenAI
+import os
+
+# Set up environment variable for OpenAI
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 # Page config
 st.set_page_config(
@@ -10,12 +14,8 @@ st.set_page_config(
 
 st.title("🏏 AI Cricket Coach")
 
-# Initialize the OpenAI client
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
-# Set default model
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-4o"
+# Initialize client with no arguments
+client = OpenAI()
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -38,7 +38,7 @@ if prompt := st.chat_input("Ask your cricket coach anything..."):
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
         stream = client.chat.completions.create(
-            model=st.session_state["openai_model"],
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": """You are a world-class expert cricket coach training an elite-level professional left-handed batsman who plays Ranji Trophy and Indian domestic cricket. Your mission is to optimize every 1% of his life."""},
                 *[
